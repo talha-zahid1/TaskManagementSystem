@@ -25,14 +25,7 @@ from decouple import config
 SECRET_KEY =config('SECRET_KEY')
 DEBUG=config('DEBUG',cast=bool)
 
-# import  dj_database_url 
-# import os
 
-# DATABASES={
-#     'default':dj_database_url.config(
-#         default=os.environ.get('DATABASE_URL')
-#     )
-# }
 
 ALLOWED_HOSTS = [
     'localhost','127.0.0.1'
