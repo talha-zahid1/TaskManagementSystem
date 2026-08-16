@@ -10,13 +10,31 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.vite
+.cache
+coverage
+.eslintcache
 *.local
+
+# Environment files (keep a committed .env.example for documented defaults)
+.env
+.env.*
+!.env.example
+
+# Local certificates and private keys
+*.pem
+*.key
+*.crt
+*.pfx
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
+.fleet
 .DS_Store
+Thumbs.db
+desktop.ini
 *.suo
 *.ntvs*
 *.njsproj

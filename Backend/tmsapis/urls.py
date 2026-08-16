@@ -9,7 +9,8 @@ urlpatterns=[
     path('api/token/',TokenObtainPairView.as_view()),
     path('api/token/refresh/',TokenRefreshView.as_view()),
     path('tasks/',nv.tasks_view.as_view()),
-    path('tasks/<int:task_id>/',nv.tasks_view.as_view()),
+    path('tasks/<int:team_id>/',nv.tasks_view.as_view()),
+    path('update-task/<int:task_id>/',nv.tasks_view.as_view()),
     path('create-team/',nv.create_team_view.as_view()),
     path('teams/<int:team_id>/',nv.team_detail_view.as_view()),
     path('add-team-mem/<int:team_id>/',nv.add_team_mem_view.as_view()),
@@ -20,5 +21,6 @@ urlpatterns=[
     path('me/',nv.current_user_view.as_view()),
     path('statistics/<int:team_id>/',nv.stats_view.as_view()),
     path('get-teams/',nv.get_team_view.as_view()),
+    path('get-single-team/<int:team_id>/',nv.get_single_team.as_view()),
 
 ]

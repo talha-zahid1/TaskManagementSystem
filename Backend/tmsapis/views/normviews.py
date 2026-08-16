@@ -21,28 +21,23 @@ class tasks_view(APIView):
     permission_classes=[IsAuthenticated]
 
 
-    def get(self,req,task_id=None):
-        if task_id:
-            task=Task_model.objects.filter(id=task_id).first()
-            if not task:
-                return Response({
-                'status':False,
-                'message':'task Not Found'
-                },status=404)
-        else:
-            task=Task_model.objects.all()    
+    def get(self,req,team_id=None):
+        if team_id:
+            task=Task_model.objects.filter(team_id=team_id)
+            
+        
         
         
         return Response({
             'status':True,
-            'message':'TaskList' if not task_id else f'Task {task_id}',
-            'task':taskserializer(task,many=True).data if not task_id else taskserializer(task).data
+            'message':f'TaskList of Team ID {team_id}' ,
+            'task':taskserializer(task,many=True).data 
         })
         
         
-    def post(self,req):
+    def post(self,req,team_id):
         serializer=taskserializer(data=req.data)
-        cb=Team_model.objects.filter(id=req.data.get('team_id')).first()
+        cb=Team_model.objects.filter(id=team_id).first()
         if not cb:
             return Response({
                 'status':False,
@@ -70,6 +65,7 @@ class tasks_view(APIView):
         return Response(serializer.errors,status=400)
     
     def put(self,req,task_id):
+        print('request Arrived')
         task=Task_model.objects.filter(id=task_id).first()
         if not task:
             return Response({
@@ -144,6 +140,29 @@ class team_detail_view(APIView):
             'status':True,
             'message':f'Team {team_id} deleted'
         })
+class get_single_team(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,req,team_id):
+        team=Team_model.objects.filter(id=team_id).first()
+        print("Requets Arrived")
+        if not team:
+            return Response({
+                'status':False,
+                'message':'Team Not Found'
+                },status=404)
+        data={
+            "team_id":team.id,
+            "team_name":team.team_name,
+            "team_description":team.team_description,
+            "created_at":team.created_at,
+            "created_by":team.created_by.username
+        }
+        return Response({
+            "message":"success",
+            "status":True,
+            "data":data
+        })
+        
 
 class add_team_mem_view(APIView):
     permission_classes=[IsAuthenticated]
@@ -187,11 +206,12 @@ class rem_team_mem_view(APIView):
             },status=403)
         user_id=req.data.get('user_id')
         try:
+            print("user_id",user_id)
             user=User.objects.get(id=user_id)
         except User.DoesNotExist:
             return Response({
                 'status':False,
-                'message':f'{user.username} is Not Registered'
+                'message':f'user is Not Registered'
             },status=400)
         mem=Team_members.objects.filter(user_id=user_id,team_id=team).first()
         if not mem:
@@ -218,11 +238,7 @@ class get_team_mem_view(APIView):
                 'message':'Team Not Found'
             },status=404)
         mem=Team_members.objects.filter(team_id=team)
-        if not mem:
-            return Response({
-            'status':False,
-            'message':f"Team {team_id} emtpy"
-        },status=404)
+        
         
         data=[
             {
@@ -258,7 +274,7 @@ class stats_view(APIView):
             In_progress=Count('id',filter=Q(status='Progress')),
             Completed=Count('id',filter=Q(status='Completed')),
             review_tasks=Count('id',filter=Q(status='Review')),
-            todo_tasks=Count('id',filter=Q(status='todo')),
+            todo_tasks=Count('id',filter=Q(status='To Do')),
             high_priority_tasks=Count('id',filter=Q(priority='High')),
             over_due_tasks=Count('id',filter=Q(Due_date__lte=timezone.now()))
             )
@@ -268,7 +284,7 @@ class stats_view(APIView):
             In_progress=Count('id',filter=Q(status='Progress')),
             Completed=Count('id',filter=Q(status='Completed')),
             review_tasks=Count('id',filter=Q(status='Review')),
-            todo_tasks=Count('id',filter=Q(status='todo')),
+            todo_tasks=Count('id',filter=Q(status='To Do')),
             high_priority_tasks=Count('id',filter=Q(priority='High')),
             over_due_tasks=Count('id',filter=Q(Due_date__lte=timezone.now()))
         )
@@ -307,7 +323,7 @@ class current_user_view(APIView):
             'username':req.user.username,
             'email':req.user.email
         })
-
+    
 class get_team_view(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,req):

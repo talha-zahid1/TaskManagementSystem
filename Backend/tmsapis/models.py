@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+
 class Team_model(models.Model):
     id=models.AutoField(primary_key=True)
     team_name=models.CharField(max_length=100)

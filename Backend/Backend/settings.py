@@ -26,12 +26,12 @@ SECRET_KEY =config('SECRET_KEY')
 DEBUG=config('DEBUG',cast=bool)
 
 
-
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     "mtalha1.pythonanywhere.com",
 ]
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS=[
      "http://localhost:5173",
      "https://task-management-system-pi-ebon.vercel.app"
