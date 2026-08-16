@@ -1,32 +1,37 @@
-# Task Management System
+# TaskFlow — Task Management System
 
-A full-stack task-management application for creating teams, managing members, assigning tasks, and tracking task statistics.
-
-## Tech stack
-
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS, Axios
-- **Backend:** Django, Django REST Framework, Simple JWT
-- **Database:** SQLite (development default)
+TaskFlow is a full-stack team task-management application. Users can register, create teams, add members, assign tasks, and follow work through a four-stage board: **To Do**, **Progress**, **Review**, and **Completed**.
 
 ## Features
 
-- User registration and JWT-based sign-in
-- Team creation, membership management, and role-based administration
-- Task creation, editing, deletion, assignment, priority, status, and due dates
-- Global and team-level task statistics, including overdue and high-priority counts
-- Protected dashboard and team workspace routes
+- JWT-based registration, sign-in, token refresh, and protected client routes
+- Team workspaces with a creator who is automatically an admin
+- Role-aware team administration for admins and team creators
+- Member lookup, member addition, and member removal
+- Task creation, editing, deletion, assignment, due dates, priorities, and statuses
+- Per-team task totals, status counts, high-priority count, and overdue count
+- Responsive React interface styled with Tailwind CSS
 
-## Project structure
+## Technology
+
+| Area | Tools |
+| --- | --- |
+| Frontend | React 19, Vite, React Router, Tailwind CSS, Axios, Lucide React |
+| Backend | Django 5, Django REST Framework, Simple JWT, django-cors-headers |
+| Development database | SQLite |
+
+## Repository layout
 
 ```text
 TaskManagementsystem/
-├── Backend/       # Django REST API
-└── frontend/      # React/Vite client
+├── Backend/   # Django REST API, models, migrations, and API documentation
+├── Frontend/  # React/Vite application
+└── README.md
 ```
 
-## Run locally
+## Run the application locally
 
-Start the backend first:
+### 1. Start the API
 
 ```powershell
 cd Backend
@@ -35,56 +40,68 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Create `Backend/.env` with the required Django settings:
+Create `Backend/.env`:
 
 ```env
 SECRET_KEY=replace-with-a-long-random-secret
 DEBUG=True
 ```
 
-Then prepare and run the API:
+Create the database tables and start Django:
 
 ```powershell
-python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
 
-The API is available at `http://127.0.0.1:8000`.
+The API is available at `http://127.0.0.1:8000/`.
 
-In a second terminal, run the frontend:
+### 2. Start the web client
+
+Open a second terminal from the repository root:
 
 ```powershell
-cd frontend
+cd Frontend
 npm install
+```
+
+Create `Frontend/.env`:
+
+```env
+VITE_URL=http://127.0.0.1:8000/
+```
+
+Then run:
+
+```powershell
 npm run dev
 ```
 
-Open the Vite URL shown in the terminal (normally `http://localhost:5173`). The default frontend configuration connects to `http://127.0.0.1:8000`.
+Open the URL Vite reports, normally `http://localhost:5173`.
 
-## Frontend environment variables
+## Configuration notes
 
-The frontend uses the default local API URL when no environment file is present. To point it elsewhere, create `frontend/.env`:
+- `Backend/.env` and `Frontend/.env` are local configuration files and are ignored by Git.
+- The frontend reads its API base URL from `VITE_URL`; it must match the running backend URL.
+- The backend currently allows the standard Vite development origin (`http://localhost:5173`) through CORS. Add your deployment origin to `Backend/Backend/settings.py` before deploying.
+- The production backend should use `DEBUG=False`, a strong `SECRET_KEY`, suitable `ALLOWED_HOSTS`, HTTPS, and a production database.
 
-```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
-```
+## Common commands
 
-## Useful commands
-
-| Location | Command | Purpose |
+| Directory | Command | Purpose |
 | --- | --- | --- |
-| `Backend` | `python manage.py runserver` | Start the API server |
-| `Backend` | `python manage.py test` | Run Django tests |
-| `frontend` | `npm run dev` | Start the development server |
-| `frontend` | `npm run build` | Create a production build |
-| `frontend` | `npm run lint` | Run ESLint |
+| `Backend` | `python manage.py runserver` | Run the development API. |
+| `Backend` | `python manage.py test` | Run Django tests. |
+| `Backend` | `python manage.py createsuperuser` | Create an admin-site account. |
+| `Frontend` | `npm run dev` | Run the Vite development server. |
+| `Frontend` | `npm run build` | Create a production web build. |
+| `Frontend` | `npm run lint` | Run frontend linting. |
 
 ## API
 
-The backend exposes its routes from the server root. Authentication uses access and refresh tokens; after signing in, send the access token as `Authorization: Bearer <access-token>` for protected routes. See the [backend README](Backend/README.md) for the complete route list and request details.
+The API provides authentication, team, membership, task, statistics, and current-user endpoints. See the [backend API README](Backend/README.md) for the complete list of routes, authentication details, and request payloads.
 
-## Notes
+## Further documentation
 
-- `Backend/.env`, the local SQLite database, virtual environments, and Python cache files are intentionally ignored by Git.
-- The default CORS configuration permits the local Vite development addresses on ports `5173`.
+- [Frontend README](Frontend/README.md) — client setup, routes, and authentication behavior
+- [Backend README](Backend/README.md) — API setup and endpoint reference
